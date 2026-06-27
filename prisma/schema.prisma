@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model MasterCoil {
+  id         Decimal  @id(map: "MasterCoil_pkey") @map("ID") @db.Decimal
+  coilNumber String   @unique(map: "MasterCoil_Coil Number_key") @map("Coil Number")
+  grade      String   @map("Grade")
+  width      Decimal  @map("Width") @db.Decimal
+  weight     Int      @map("Weight")
+  status     String   @map("Status")
+  location   String?  @map("Location")
+  gauge      Decimal? @map("Gauge") @db.Decimal
+  supplier   String?  @map("Supplier")
+  rockwell   Decimal? @map("Rockwell") @db.Decimal
+  finish     String?  @map("Finish")
+  reservedCustomer String? @map("Reserved Customer")
+
+  @@map("Inventory")
+}
+
+model Customer {
+  id             String    @id @map("ID") @db.Uuid
+  customerNumber String    @unique @map("Customer Number")
+  name           String?   @map("Customer Name")
+  address        String?   @map("Address")
+  size           Decimal?  @map("Size") @db.Decimal
+  finish         String?   @map("Finish")
+  weight         Decimal?  @map("Weight") @db.Decimal
+  grade          String?   @map("Grade")
+  gauge          Decimal?  @map("Gauge") @db.Decimal
+  rockwell       Decimal?  @map("Rockwell") @db.Decimal
+  contactName    String?   @map("Contact Name")
+  email          String?   @map("Email")
+  phone          String?   @map("Phone")
+  salesman       String?   @map("Salesman")
+  status         String    @default("Active") @map("Status")
+  createdAt      DateTime  @default(now()) @map("Created At")
+  salesMemos      SalesMemo[]
+
+  @@map("Customers")
+}
+
+model SalesMemo {
+  id             String   @id @default(cuid())
+  memoNumber     String   @unique
+  customerId     String   @db.Uuid
+  customer       Customer @relation(fields: [customerId], references: [id])
+  salesman       String
+  grade          String
+  finish         String
+  gauge          Decimal? @db.Decimal
+  width          Decimal  @db.Decimal
+  weight         Int
+  dueDate        DateTime? @db.Date
+  status         String   @default("Open")
+  notes          String?
+  createdAt      DateTime @default(now())
+}
+
+model Salesman {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+}
+
+model Setup {
+  id          Int      @id @default(autoincrement())
+  setupNumber String   @unique
+  createdAt   DateTime @default(now())
+
+  @@map("Setups")
+}
+
+model ScheduledSetup {
+  id          String   @id @default(cuid())
+  setupNumber String   @unique
+  dateApplied String
+  applier     String?
+  machine     String
+  gauge       String?
+  finish      String?
+  status      String   @default("Ready to schedule")
+  submittedAt DateTime @default(now())
+  coils       Json
+  salesMemos  Json
+}
+
+model SlitJob {
+  jobNumber       String    @id @map("Job Number") @db.Uuid
+  customer        String?   @map("Customer")
+  masterCoil      String?   @map("Master Coil") @db.Uuid
+  status          String?   @map("Status")
+  dueDate         DateTime? @map("Due Date") @db.Date
+  inputWeight     Decimal?  @map("Input Weight") @db.Decimal
+  outputWeight    Decimal?  @map("Output Weight") @db.Decimal
+  scrapWeight     Decimal?  @map("Scrap Weight") @db.Decimal
+  scrapPercentage Decimal?  @map("Scrap Percentage") @db.Decimal
+
+  @@map("Slit Job")
+}
