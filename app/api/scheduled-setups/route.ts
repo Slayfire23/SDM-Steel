@@ -21,6 +21,10 @@ type SetupCoil = {
   coilNumber?: string;
 };
 
+type SetupWithCoils = {
+  coils: unknown;
+};
+
 export async function POST(request: Request) {
   const payload = (await request.json()) as ScheduledSetupPayload;
 
@@ -87,7 +91,7 @@ export async function PATCH(request: Request) {
   let slitCoils = 0;
 
   if (status === "Ready to Ship") {
-    const completedSetups = await prisma.scheduledSetup.findMany({
+    const completedSetups: SetupWithCoils[] = await prisma.scheduledSetup.findMany({
       where: {
         setupNumber: {
           in: setupNumbers,
