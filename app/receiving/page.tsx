@@ -3,6 +3,8 @@ import DashboardLogoLink from "../components/DashboardLogoLink";
 import { getNextCoilNumber } from "./coilNumbers";
 import ReceivingForm from "./ReceivingForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function ReceivingPage() {
   const [nextCoilNumber, customers] = await Promise.all([
     getNextCoilNumber(),
