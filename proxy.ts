@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { authCookieName, canAccessPath, getUserByUsername } from "@/lib/auth";
 
-const publicPrefixes = ["/sign-in", "/_next", "/favicon.ico"];
+const publicPrefixes = ["/sign-in", "/api/sign-in", "/_next", "/favicon.ico"];
 
 export function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
