@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createSalesman } from "./actions";
 
@@ -12,7 +11,6 @@ const inputClass =
   "mt-2 h-12 rounded-md border border-zinc-700 bg-zinc-900 px-3 text-zinc-50 outline-none focus:border-cyan-300";
 
 export default function SalesmanPicker({ salesmen }: SalesmanPickerProps) {
-  const router = useRouter();
   const [selectedSalesman, setSelectedSalesman] = useState("");
 
   return (
@@ -36,9 +34,11 @@ export default function SalesmanPicker({ salesmen }: SalesmanPickerProps) {
 
         <button
           type="button"
-          onClick={() =>
-            router.push(`/sales/${encodeURIComponent(selectedSalesman)}`)
-          }
+          onClick={() => {
+            window.location.assign(
+              `/sales/${encodeURIComponent(selectedSalesman)}`,
+            );
+          }}
           className="h-12 rounded-md bg-cyan-400 px-6 font-bold text-zinc-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:bg-zinc-700 disabled:text-zinc-400 sm:self-end"
           disabled={!selectedSalesman}
         >

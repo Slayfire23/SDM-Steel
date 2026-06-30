@@ -1,7 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-
 type CustomerOption = {
   customerNumber: string;
   id: string;
@@ -22,8 +20,6 @@ export default function CustomerSelector({
   salesman,
   selectedCustomerId,
 }: CustomerSelectorProps) {
-  const router = useRouter();
-
   return (
     <label className="mt-6 flex max-w-xl flex-col text-sm font-semibold text-zinc-200">
       View Customer Details
@@ -34,7 +30,7 @@ export default function CustomerSelector({
           const customerId = event.target.value;
           const basePath = `/sales/${encodeURIComponent(salesman)}`;
 
-          router.push(
+          window.location.assign(
             customerId
               ? `${basePath}?customerId=${encodeURIComponent(customerId)}`
               : basePath,

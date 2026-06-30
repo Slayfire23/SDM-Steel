@@ -1,7 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-
 type SalesmanSwitcherProps = {
   currentSalesman: string;
   salesmen: string[];
@@ -14,7 +12,6 @@ export default function SalesmanSwitcher({
   currentSalesman,
   salesmen,
 }: SalesmanSwitcherProps) {
-  const router = useRouter();
   const options = salesmen.includes(currentSalesman)
     ? salesmen
     : [currentSalesman, ...salesmen];
@@ -26,7 +23,9 @@ export default function SalesmanSwitcher({
         className={inputClass}
         value={currentSalesman}
         onChange={(event) => {
-          router.push(`/sales/${encodeURIComponent(event.target.value)}`);
+          window.location.assign(
+            `/sales/${encodeURIComponent(event.target.value)}`,
+          );
         }}
       >
         {options.map((salesman) => (

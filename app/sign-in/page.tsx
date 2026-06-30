@@ -1,5 +1,4 @@
 import { appUsers } from "@/lib/auth";
-import { signIn } from "./actions";
 
 type SignInPageProps = {
   searchParams?: Promise<{
@@ -34,7 +33,8 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
           {appUsers.map((user) => (
             <form
               key={user.username}
-              action={signIn}
+              action="/api/sign-in"
+              method="post"
               className="rounded-lg border border-zinc-800 bg-zinc-900 p-5"
             >
               <h2 className="text-xl font-bold">{user.name}</h2>

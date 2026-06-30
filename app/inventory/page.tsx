@@ -1,4 +1,3 @@
-import Link from "next/link";
 import DashboardLogoLink from "../components/DashboardLogoLink";
 
 const inventoryLinks = [
@@ -16,13 +15,13 @@ export default function InventoryPage() {
         </h1>
         <div className="flex w-full flex-col items-center gap-5">
           {inventoryLinks.map((item) => (
-            <Link
+            <a
               key={item.href}
               href={item.href}
               className="flex h-16 w-full max-w-xs items-center justify-center rounded-md bg-cyan-400 px-6 text-center text-lg font-bold text-zinc-950 shadow-lg shadow-cyan-950/30 transition hover:bg-cyan-300 focus:outline-none focus:ring-4 focus:ring-cyan-300/30"
             >
               {item.label}
-            </Link>
+            </a>
           ))}
         </div>
       </section>
