@@ -11,14 +11,18 @@ export async function POST(request: Request) {
   );
 
   if (!user) {
-    return NextResponse.redirect(new URL("/sign-in?error=1", request.url));
+    return NextResponse.redirect(new URL("/sign-in?error=1", request.url), {
+      status: 303,
+    });
   }
 
   const destination =
     user.role === "sales" && user.salesmanName
       ? `/sales/${encodeURIComponent(user.salesmanName)}`
       : "/";
-  const response = NextResponse.redirect(new URL(destination, request.url));
+  const response = NextResponse.redirect(new URL(destination, request.url), {
+    status: 303,
+  });
 
   response.cookies.set(authCookieName, user.username, {
     httpOnly: true,
