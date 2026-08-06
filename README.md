@@ -24,6 +24,15 @@ Sales can view sales and inventory pages
 Setup / Scheduler can create setups and manage the schedule
 This helped me practice protecting pages and showing different options based on the user's role.
 
+Testing
+
+This project uses Playwright for end-to-end testing. The current test checks the live SDM Steel site and verifies the sales and inventory navigation flow.
+
+Install the Playwright browser files:
+
+bash
+npx playwright install
+
 Live Link
 
 http://sdm-steel.vercel.app
