@@ -1,0 +1,12 @@
+services:
+  web:
+    build:
+      context: .
+      args:
+        DATABASE_URL: ${DATABASE_URL}
+        POSTGRES_PRISMA_URL: ${POSTGRES_PRISMA_URL:-}
+        POSTGRES_URL: ${POSTGRES_URL:-}
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
