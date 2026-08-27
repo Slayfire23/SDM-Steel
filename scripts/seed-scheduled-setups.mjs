@@ -184,10 +184,7 @@ try {
     }
 
     const breaks = index % 3;
-    const pieces = breaks + 1;
     const cuts = Math.max(1, Math.floor(Number(coil.width) / memoWidth));
-    const plugWeight = (Number(coil.weight) * memoWidth) / Number(coil.width) / pieces;
-    const totalPlugs = cuts * pieces;
     const setupNumber = `S${nextSetupNumber}`;
     const salesMemo = {
       memoNumber: memo.memoNumber,

@@ -278,22 +278,28 @@ export default function SetupSheet({
   const specMemo =
     memoByNumber.get(specMemoNumber.trim().toLowerCase()) ?? null;
   const selectedCoilRows = rows.filter((row) => row.ticketNumber.trim());
-  const specAppliedCoilRow =
-    selectedCoilRows.find(
-      (row) => row.rowId.toString() === specAppliedCoilRowId,
-    ) ?? null;
-  const specAppliedCoil =
-    specAppliedCoilRow
-      ? (coilByNumber.get(
-          specAppliedCoilRow.ticketNumber.trim().toLowerCase(),
-        ) ?? {
-          coilNumber: specAppliedCoilRow.ticketNumber,
+  const specAppliedCoil = useMemo(
+    () => {
+      const appliedRow =
+        rows.find((row) => row.rowId.toString() === specAppliedCoilRowId) ??
+        null;
+
+      if (!appliedRow?.ticketNumber.trim()) {
+        return null;
+      }
+
+      return (
+        coilByNumber.get(appliedRow.ticketNumber.trim().toLowerCase()) ?? {
+          coilNumber: appliedRow.ticketNumber,
           finish,
           gauge,
-          weight: parseSheetNumber(specAppliedCoilRow.weight),
-          width: specAppliedCoilRow.width,
-        })
-      : null;
+          weight: parseSheetNumber(appliedRow.weight),
+          width: appliedRow.width,
+        }
+      );
+    },
+    [coilByNumber, finish, gauge, rows, specAppliedCoilRowId],
+  );
   const matchingCoils = useMemo(() => {
     const searchValue = coilSearch.trim().toLowerCase();
     const memoWidth = selectedMemo ? Number(selectedMemo.width) : null;
@@ -1051,7 +1057,7 @@ export default function SetupSheet({
                 <option value="">Choose a coil on this setup</option>
                 {selectedCoilRows.map((row) => (
                   <option key={`spec-coil-${row.rowId}`} value={row.rowId}>
-                    Row {row.rowId} - {row.ticketNumber} - {row.width || "-"}"
+                    Row {row.rowId} - {row.ticketNumber} - {row.width || "-"}&quot;
                   </option>
                 ))}
               </select>

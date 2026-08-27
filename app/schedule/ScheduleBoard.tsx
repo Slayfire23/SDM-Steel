@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type SubmittedSetup = {
   setupNumber: string;
@@ -203,24 +203,6 @@ export default function ScheduleBoard({ initialSetups }: ScheduleBoardProps) {
     );
   }, [setups]);
 
-  useEffect(() => {
-    if (setups.length === 0 || assignments.length === 0) {
-      return;
-    }
-
-    const yesterdayAssignments = assignments.filter(
-      (assignment) =>
-        assignment.scheduleDate === yesterdayValue &&
-        assignment.status !== "Ready to Ship",
-    );
-
-    if (yesterdayAssignments.length === 0) {
-      return;
-    }
-
-    completeAssignments(yesterdayAssignments.map((assignment) => assignment.setupNumber));
-  }, [assignments, setups]);
-
   const scheduledSetupNumbers = useMemo(
     () => new Set(assignments.map((assignment) => assignment.setupNumber)),
     [assignments],
@@ -308,7 +290,13 @@ export default function ScheduleBoard({ initialSetups }: ScheduleBoardProps) {
     );
   }
 
-  function completeAssignments(setupNumbers: string[]) {
+  const findSetup = useCallback(
+    (setupNumber: string) =>
+      setups.find((setup) => setup.setupNumber === setupNumber),
+    [setups],
+  );
+
+  const completeAssignments = useCallback((setupNumbers: string[]) => {
     const setupNumberSet = new Set(setupNumbers);
     const existingFinishedGoods = JSON.parse(
       window.localStorage.getItem(finishedGoodsStorageKey) ?? "[]",
@@ -343,11 +331,27 @@ export default function ScheduleBoard({ initialSetups }: ScheduleBoardProps) {
     saveFinishedGoods([...existingFinishedGoods, ...newFinishedGoods]);
     saveAssignments(nextAssignments);
     syncScheduledSetupStatus(setupNumbers, "Ready to Ship");
-  }
+  }, [assignments, findSetup]);
 
-  function findSetup(setupNumber: string) {
-    return setups.find((setup) => setup.setupNumber === setupNumber);
-  }
+  useEffect(() => {
+    if (setups.length === 0 || assignments.length === 0) {
+      return;
+    }
+
+    const yesterdayAssignments = assignments.filter(
+      (assignment) =>
+        assignment.scheduleDate === yesterdayValue &&
+        assignment.status !== "Ready to Ship",
+    );
+
+    if (yesterdayAssignments.length === 0) {
+      return;
+    }
+
+    completeAssignments(
+      yesterdayAssignments.map((assignment) => assignment.setupNumber),
+    );
+  }, [assignments, completeAssignments, setups]);
 
   if (setups.length === 0) {
     return (
