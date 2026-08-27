@@ -68,7 +68,6 @@ jobs:
           --health-retries 5
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/coiltrack_ci
-      DOCKER_DATABASE_URL: postgresql://postgres:postgres@host.docker.internal:5432/coiltrack_ci
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
       - name: Check out code
@@ -87,4 +86,4 @@ jobs:
         run: npx prisma migrate deploy
 
       - name: Build image
-        run: docker build --add-host=host.docker.internal:host-gateway --build-arg DATABASE_URL="$DOCKER_DATABASE_URL" -t coiltrack-web:ci .
+        run: docker build --network=host --build-arg DATABASE_URL="$DATABASE_URL" -t coiltrack-web:ci .
