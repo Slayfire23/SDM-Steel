@@ -10,8 +10,22 @@ jobs:
   app:
     name: Lint and build app
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: coiltrack_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d coiltrack_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
-      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/coiltrack_ci
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
       - name: Check out code
@@ -26,6 +40,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Apply database migrations
+        run: npx prisma migrate deploy
+
       - name: Lint
         run: npm run lint
 
@@ -35,12 +52,39 @@ jobs:
   docker:
     name: Build Docker image
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: coiltrack_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d coiltrack_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
-      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/coiltrack_ci
+      DOCKER_DATABASE_URL: postgresql://postgres:postgres@host.docker.internal:5432/coiltrack_ci
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
       - name: Check out code
         uses: actions/checkout@v4
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply database migrations
+        run: npx prisma migrate deploy
+
       - name: Build image
-        run: docker build --build-arg DATABASE_URL="$DATABASE_URL" -t coiltrack-web:ci .
+        run: docker build --add-host=host.docker.internal:host-gateway --build-arg DATABASE_URL="$DOCKER_DATABASE_URL" -t coiltrack-web:ci .
